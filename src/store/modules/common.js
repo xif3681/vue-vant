@@ -16,7 +16,7 @@ const loopStores = (categories, type) => {
   let result = []
   if (!categories) return result
   for (let i = 0, count = categories.length; i < count; i++) {
-    const category = categories[i]
+    const category = Object.assign({}, categories[i])
 
     if (category.type === type) {
       delete category.children
