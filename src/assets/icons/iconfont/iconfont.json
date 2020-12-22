@@ -1,0 +1,128 @@
+{
+  "id": "2209305",
+  "name": "市场调研",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "18267788",
+      "name": "add2",
+      "font_class": "add2",
+      "unicode": "e678",
+      "unicode_decimal": 59000
+    },
+    {
+      "icon_id": "18267748",
+      "name": "jurisdiction",
+      "font_class": "jurisdiction",
+      "unicode": "e675",
+      "unicode_decimal": 58997
+    },
+    {
+      "icon_id": "18267749",
+      "name": "store",
+      "font_class": "store",
+      "unicode": "e676",
+      "unicode_decimal": 58998
+    },
+    {
+      "icon_id": "18267750",
+      "name": "list",
+      "font_class": "list",
+      "unicode": "e677",
+      "unicode_decimal": 58999
+    },
+    {
+      "icon_id": "18267210",
+      "name": "down",
+      "font_class": "down",
+      "unicode": "e671",
+      "unicode_decimal": 58993
+    },
+    {
+      "icon_id": "18267211",
+      "name": "down2",
+      "font_class": "down2",
+      "unicode": "e672",
+      "unicode_decimal": 58994
+    },
+    {
+      "icon_id": "18267212",
+      "name": "right",
+      "font_class": "right",
+      "unicode": "e673",
+      "unicode_decimal": 58995
+    },
+    {
+      "icon_id": "18267213",
+      "name": "delete",
+      "font_class": "delete1",
+      "unicode": "e674",
+      "unicode_decimal": 58996
+    },
+    {
+      "icon_id": "18266815",
+      "name": "delete",
+      "font_class": "delete",
+      "unicode": "e670",
+      "unicode_decimal": 58992
+    },
+    {
+      "icon_id": "18266623",
+      "name": "add",
+      "font_class": "add",
+      "unicode": "e66a",
+      "unicode_decimal": 58986
+    },
+    {
+      "icon_id": "18266624",
+      "name": "close",
+      "font_class": "close",
+      "unicode": "e66b",
+      "unicode_decimal": 58987
+    },
+    {
+      "icon_id": "18266625",
+      "name": "user",
+      "font_class": "user",
+      "unicode": "e66c",
+      "unicode_decimal": 58988
+    },
+    {
+      "icon_id": "18266626",
+      "name": "search",
+      "font_class": "search",
+      "unicode": "e66d",
+      "unicode_decimal": 58989
+    },
+    {
+      "icon_id": "18266627",
+      "name": "organizaation",
+      "font_class": "organizaation",
+      "unicode": "e66e",
+      "unicode_decimal": 58990
+    },
+    {
+      "icon_id": "18266628",
+      "name": "manage",
+      "font_class": "manage",
+      "unicode": "e66f",
+      "unicode_decimal": 58991
+    },
+    {
+      "icon_id": "18265384",
+      "name": "investigation",
+      "font_class": "investigation",
+      "unicode": "e668",
+      "unicode_decimal": 58984
+    },
+    {
+      "icon_id": "18265385",
+      "name": "report",
+      "font_class": "report",
+      "unicode": "e669",
+      "unicode_decimal": 58985
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+default:
+    package:
+        - FROM common-nginxvue
+        - ADD dist/ /var/www/public
+
+prod:
+    build:
+        - npm install
+        - npm run build:production
+dev:
+    build:
+        - npm install
+        - npm run build:dev
+test:
+    build:
+        - npm install
+        - npm run build:test
+uat:
+    build:
+        - npm install
+        - npm run build:uat
