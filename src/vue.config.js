@@ -1,5 +1,6 @@
 const CompressionPlugin = require('compression-webpack-plugin')
 const path = require('path');
+const myTheme = path.resolve(__dirname, "src/assets/style/myTheme.less");
 function resolve (dir) {
     return path.join(__dirname, dir)
 }
@@ -8,7 +9,7 @@ module.exports = {
     loaderOptions: {
       less: {
         modifyVars: {
-          green: '#4F77AA'
+          green: '#4F77AA',
         }
       }
     }

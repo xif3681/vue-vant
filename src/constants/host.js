@@ -18,6 +18,13 @@ export const getSSOHost = () => {
       : 'https://cas.pagoda.com.cn/cas2/login?service='
   )
 }
+export const getbaseURL = () => {
+  return (
+    ENV === 'production'
+      ? 'https://cas.pagoda.com.cn/cas2'
+      : 'https://cas.pagoda.com.cn/cas2'
+  )
+}
 
 // base url
 export const apiURL = {

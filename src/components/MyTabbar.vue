@@ -1,15 +1,15 @@
 
 <template>
-  <Tabbar route class="my-tabbar" active-color="#3253B2" inactive-color="#909090">
-    <TabbarItem to="/" replace @click="$store.dispatch('cleanKeepList')">
-      <img  slot="icon" slot-scope="props" :src="props.active ? icon.mission_show : icon.mission" />
+  <Tabbar route class="my-tabbar" active-color="#50bc93" inactive-color="#909090">
+    <TabbarItem to="/" replace>
+      <img slot="icon" slot-scope="props" :src="props.active ? icon.order_show : icon.order" />
       <div>订货</div>
     </TabbarItem>
-    <TabbarItem to="/management" @click="$store.dispatch('cleanKeepList')">
-      <img slot="icon" slot-scope="props" :src="props.active ? icon.report_show : icon.report" />
+    <TabbarItem v-if="!disableAllocationApplyPrivilege" to="/management">
+      <img slot="icon" slot-scope="props" :src="props.active ? icon.settings_show : icon.settings" />
       管理
     </TabbarItem>
-    <TabbarItem to="/about" replace @click="$store.dispatch('cleanKeepList')">
+    <TabbarItem to="/about" replace>
       <img slot="icon" slot-scope="props" :src="props.active ? icon.mine_show : icon.mine" />
       我的
     </TabbarItem>
@@ -18,6 +18,8 @@
 
 <script>
 import { Tabbar, TabbarItem } from 'vant';
+import { mapGetters } from 'vuex';
+import { BOOKING_PRIVILEGES, BOOKING_USER_PRIVILEGE_AUTH } from '@/constants';
 export default {
   name: 'MyTabbar',
   components: {
@@ -26,18 +28,28 @@ export default {
   },
   data() {
     return {
+      BOOKING_PRIVILEGES,
       icon: {
-        mine_show: require('../assets/icons/user.png'),
-        mine: require('../assets/icons/user-dark.png'),
-        mission_show: require('../assets/icons/investigation.png'),
-        mission: require('../assets/icons/investigation-dark.png'),
-        report_show: require('../assets/icons/report-new.png'),
-        report: require('../assets/icons/report-new-dark.png')
-      },
-      active: 'a'
+        mine_show: require('../assets/icons/user_show.png'),
+        mine: require('../assets/icons/user.png'),
+        order_show: require('../assets/icons/order_show.png'),
+        order: require('../assets/icons/order.png'),
+        settings_show: require('../assets/icons/settings_show.png'),
+        settings: require('../assets/icons/settings.png')
+      }
     };
   },
-  created() {},
+  computed: {
+    ...mapGetters({
+      privilegeAuth: BOOKING_USER_PRIVILEGE_AUTH
+    }),
+    disableAllocationApplyPrivilege() {
+      return !this.privilegeAuth(this.BOOKING_PRIVILEGES.ALLOCATION_APPLY);
+    }
+  },
+  created() {
+    console.log(this.disableAllocationApplyPrivilege);
+  },
   methods: {}
 };
 </script>
@@ -47,21 +59,24 @@ export default {
   position: fixed;
   bottom: 0;
   left: 0;
-  border-top:1px solid #8E8E93;
-  .van-tabbar-item__icon{
+  border-top: 1px solid #8e8e93;
+  .van-tabbar-item__icon {
     margin-bottom: 4px;
   }
   .van-tabbar-item__text {
     text-align: center;
     font-size: 10px;
   }
-  .iconinvestigation, .iconreport, .iconuser {
-    color:#B7B7C0;
+  .iconinvestigation,
+  .iconreport,
+  .iconuser {
+    color: #b7b7c0;
     font-size: 18px;
   }
-  .iconinvestigation.active,.iconreport.active,.iconuser.active {
-      color: #2E66F1;
+  .iconinvestigation.active,
+  .iconreport.active,
+  .iconuser.active {
+    color: #2e66f1;
   }
-
 }
 </style>

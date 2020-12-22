@@ -1,0 +1,5 @@
+export const ALL = 'BOOKING_CONFIGS'
+export const ALLOCATION_ORDER = 'allocationOrderConfig'
+export const ALLOCATION_ORDER_ALLOCATED_TYPE = 'allocatedType'
+export const ALLOCATION_ORDER_CONTINUES_OVER = 'continuesOver'
+export const ALLOCATION_ORDER_STATUS = 'status'

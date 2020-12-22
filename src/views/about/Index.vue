@@ -1,5 +1,6 @@
 <template>
   <div class="my-page">
+    <MyNavBar></MyNavBar>
     <div class="my-infos row">
       <div class="my-img">
         <van-image :src="logoImage" alt />
@@ -34,7 +35,8 @@ export default {
     Cell,
     [Image.name]: Image,
     [DropdownItem.name]: DropdownItem,
-    [DropdownMenu.name]: DropdownMenu
+    [DropdownMenu.name]: DropdownMenu,
+    MyNavBar: () => import('@/components/MyNavBar')
   },
   data() {
     return {

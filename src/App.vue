@@ -1,32 +1,23 @@
 <template>
   <div id="app">
-    <watermark :inputText="watermarkTxt" inputAllowDele inputDestroy />
-    <div class="layout" v-if="token && !!privileges.length">
+    <watermark inputText="" inputAllowDele inputDestroy />
+    <div class="layout" v-if="user.token && !$emptyObject(privileges)">
       <div class="content">
-        <keep-alive :include="getKeepaliveList">
+        <keep-alive>
           <router-view></router-view>
         </keep-alive>
         <MyTabbar />
       </div>
     </div>
 
-    <div class="empty-layout" v-else>
-      <p v-if="!privileges.length">无系统权限，请联系系统管理员</p>
-      <Button
-        v-else
-        type="primary"
-        round
-        :disabled="this.loading"
-        :loading="loading"
-        @click="redirectToSSOLogin"
-      >应用授权</Button>
+    <div class="empty-layout" v-else-if="!loading">
+      <p v-if="$emptyObject(privileges)">无系统权限，请联系系统管理员</p>
+      <Button v-else type="primary" round :disabled="this.loading" :loading="loading" @click="redirectToSSOLogin">应用授权</Button>
     </div>
   </div>
 </template>
 <script>
 import http from './services/request';
-
-import { getSSOHost } from './constants/host';
 import {
   getSessionItem,
   setSessionItem,
@@ -35,6 +26,14 @@ import {
 import Watermark from './components/Watermark';
 import MyTabbar from './components/MyTabbar';
 import { Toast, Button } from 'vant';
+import {
+  BOOKING_CONFIGS,
+  BOOKING_USER_ORG_LIST,
+  BOOKING_USER_AUTH,
+  BOOKING_USER_PRIVILEGES
+} from './constants';
+import { mapGetters } from 'vuex';
+
 export default {
   name: 'App',
   components: {
@@ -44,74 +43,61 @@ export default {
   },
   data() {
     return {
-      loading: false,
-      token: '',
-      privileges: [],
-      watermarkTxt: '' // TODO: 不再使用？
+      loading: false
     };
+  },
+  computed: {
+    ...mapGetters({
+      privileges: BOOKING_USER_PRIVILEGES,
+      user: BOOKING_USER_AUTH
+    })
   },
   created() {
     this.controller();
   },
-  computed: {
-    getKeepaliveList() {
-      console.log(this.$store.getters.getKeepList)
-      return this.$store.getters.getKeepList;
-    }
-  },
-  beforeRouteLeave(to, from, next) {
-    if (to.name !== 'EditNews') {
-      this.$store.commit('removeKeepaliveList', from.name);
-    } else {
-      this.$store.commit('setKeepaliveList', from.name);
-    }
-    next();
-  },
   methods: {
-
+    async init() {
+      try {
+        const enums = await this.$services.order.allocationOrderConfig();
+        const { data: orgList } = await this.$services.order.orgList();
+        this.$store.dispatch(BOOKING_CONFIGS.ALL, enums);
+        this.$store.dispatch(BOOKING_USER_ORG_LIST, orgList);
+      } catch (error) {
+        console.log('init Error: ', error);
+      }
+    },
     controller() {
-      const token = getSessionItem('token') || '';
-      const privileges = JSON.parse(getSessionItem('privileges')) || [];
-      if (token && token !== 'undefined') {
-        console.log(1)
-        this.token = token;
-        this.privileges = privileges;
-        http.defaults.headers.common['Authorization'] = token;
+      const localUser = JSON.parse(getSessionItem('user')) || {};
+      console.log(typeof localUser);
+      if (localUser && localUser.token && localUser.token !== 'undefined') {
+        console.log(1);
+        http.defaults.headers.common['Authorization'] = localUser.token;
+        if (!this.user.token) {
+          this.$store.dispatch(BOOKING_USER_AUTH, localUser);
+        }
+        if (
+          this.$emptyObject(this.$store.state.common.configs) ||
+          this.$emptyObject(this.$store.state.common.orgList)
+        ) {
+          this.init();
+        }
         return;
       }
 
-      // const userCode = getSearchParameter('userCode');
-      // const userName = decodeURIComponent(getSearchParameter('userName'));
-      // if (userCode) {
-      //   console.log(3)
-      //   this.getUser({ userCode, userName });
-      //   return;
-      // }
-
       const ticket = getSearchParameter('ticket');
       if (ticket) {
-        console.log(2)
+        console.log(2);
         this.getUser({ ticket });
       } else {
-        console.log(3)
-        this.redirectToSSOLogin();
+        console.log(3);
+        this.$services.cas.login();
       }
-    },
-    redirectToSSOLogin() {
-      let originUrl = window.location.href;
-      const ssoHost = getSSOHost();
-      const ticket = getSearchParameter('ticket');
-      if (ticket) {
-        const index = originUrl.indexOf('?');
-        originUrl = originUrl.substring(0, index);
-      }
-      window.location.href = ssoHost + originUrl;
     },
 
     async getUser(params) {
       const { userCode, ticket, userName } = params;
-      console.log(userCode)
-      console.log(userName)
+      console.log(userCode);
+      console.log(userName);
       const loading = Toast.loading({
         duration: 0,
         forbidClick: true,
@@ -119,40 +105,43 @@ export default {
       });
       this.loading = true;
       if (ticket) {
-        const casUser = await this.$services.cas.serviceValidate(ticket)
-        console.log(casUser)
+        const casUser = await this.$services.cas.serviceValidate(ticket);
 
-        const { authenticationSuccess = {}, authenticationFailure = {} } = casUser.serviceResponse
+        const {
+          authenticationSuccess = {},
+          authenticationFailure = {}
+        } = casUser.serviceResponse;
+        debugger;
         if (authenticationFailure && authenticationFailure.code) {
           Toast.fail('用户权限验证失败, 请重新登录');
           setTimeout(() => {
-            this.$services.cas.logout()
-          }, 1000)
-          return
+            this.$services.cas.logout();
+          }, 1000);
+          this.loading = false;
+          return;
         }
 
-        const { deptname: [ userDeptname ] = [], name: [ userName ] = [], oaid: [ userCode ] = [] } = authenticationSuccess.attributes || {}
-
-        const orderUser = await this.$services.order.login(userCode)
-
+        const {
+          deptname: [userDeptname] = [],
+          name: [userName] = [],
+          oaid: [userCode] = []
+        } = authenticationSuccess.attributes || {};
+        const orderUser = await this.$services.order.login(userCode);
         const user = {
           ...orderUser,
           deptname: userDeptname,
           name: userName,
           code: userCode
-        }
-
-        setSessionItem('token', orderUser.token);
+        };
+        this.$store.dispatch(BOOKING_USER_AUTH, user);
         setSessionItem('user', user);
-        setSessionItem('privileges', [orderUser.privileges]);
         http.defaults.headers.common['Authorization'] = orderUser.token;
-        this.token = orderUser.token;
-        this.privileges = [orderUser.privileges];
         this.loading = false;
         loading.clear();
         this.$router.go(0);
+        this.init();
       } else {
-        this.$services.cas.login()
+        this.$services.cas.login();
       }
     }
   }
@@ -174,7 +163,7 @@ export default {
 }
 .layout {
   width: 100%;
-  background: #F2F1F6;
+  background: #f2f1f6;
   overflow-x: hidden;
   .content {
     width: 100%;

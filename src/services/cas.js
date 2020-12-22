@@ -7,9 +7,10 @@
 
 import request from './request'
 import { BOOKING_SERVICES_TYPES } from '@/constants'
+import { getbaseURL } from '@/constants/host';
 
-const baseURL = 'https://cas.pagoda.com.cn/cas2'
-
+// const baseURL = 'https://cas.pagoda.com.cn/cas2'
+const baseURL = getbaseURL();
 export const login = () => {
   window.location.href = `${baseURL}/login?service=${window.location.origin}`
 }
